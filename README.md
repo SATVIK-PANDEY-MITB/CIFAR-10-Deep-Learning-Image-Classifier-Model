@@ -96,6 +96,3 @@ If Streamlit does not open automatically, visit the local URL shown in the termi
 - Although the uploader accepts larger files, the model always evaluates the image after resizing it to `32x32`.
 - If you retrain the model, replace `TransferlearningSP.keras` with the new exported file.
 
-## Credits
-
-This project was built as a CIFAR-10 image classification demo using deep learning and Streamlit.
