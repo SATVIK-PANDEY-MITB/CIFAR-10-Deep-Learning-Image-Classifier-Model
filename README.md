@@ -12,7 +12,7 @@ An end-to-end computer-vision project that explores image classification on CIFA
 | Dataset | CIFAR-10: 60,000 color images, 32 x 32 pixels |
 | Notebook split | 50,000 original training images; 10,000 held out for test; 20% of the original training split reserved for validation |
 | Model input | 32 x 32 x 3 RGB image, scaled to [0, 1] |
-| App model | Keras CNN loaded from `TransferlearningSP.keras` |
+| App model | Keras model loaded from `TransferlearningSP.keras`; app supports the checked-in CNN and the notebook's ResNet50 model |
 | Interface | Streamlit image upload and predicted class/confidence display |
 | Main libraries | TensorFlow/Keras, NumPy, Pillow, Streamlit, Matplotlib, Seaborn, scikit-learn |
 
@@ -22,7 +22,7 @@ The CIFAR-10 labels are airplane, automobile, bird, cat, deer, dog, frog, horse,
 
 1. Accepts a PNG, JPG, or JPEG upload.
 2. Converts the image to RGB, resizes it to 32 x 32, and scales pixel values to [0, 1].
-3. Adds a batch dimension and passes the image to the cached Keras model.
+3. Adds a batch dimension and applies ResNet50 preprocessing when the loaded model contains a ResNet50 backbone; scratch-CNN inputs remain scaled to [0, 1].
 4. Displays the predicted class and the largest softmax score as a confidence percentage.
 
 The model was trained for CIFAR-10's small 32 x 32 images. Resizing a general-purpose photo to that resolution discards detail, so the demo is best suited to clear images with a prominent CIFAR-10-like object. The displayed softmax score is not a calibrated probability.
@@ -40,17 +40,15 @@ The notebook defines a Sequential CNN trained from scratch:
 - Training configuration: batch size 64, up to 20 epochs, and early stopping with patience 5 and best-weight restoration.
 - Training-only augmentation: rotations up to 15 degrees, horizontal/vertical shifts up to 10%, and horizontal flips.
 
-The Streamlit app loads `TransferlearningSP.keras`. Inspection of that saved artifact shows a convolutional model, not a ResNet50 transfer-learning model. `ImageClassificationModelSP.keras` is also a convolutional model.
+The notebook saves the scratch CNN to `ImageClassificationModelSP.keras` and the transfer-learning model to `TransferlearningSP.keras`. The currently checked-in `TransferlearningSP.keras` file is still the older scratch CNN; rerun the corrected notebook to replace it with the ResNet50 transfer-learning model.
 
 ### Transfer-learning experiment
 
-The notebook also defines an ImageNet-pretrained ResNet50 feature extractor with its base layers frozen, followed by global average pooling, a 128-unit dense layer, 30% dropout, and a 10-class softmax head. Its configured run is 10 epochs with batch size 64. This is an experiment in the notebook; it is not the architecture contained in the app's `TransferlearningSP.keras` artifact.
+The notebook uses an ImageNet-pretrained ResNet50 feature extractor with its base layers frozen, followed by global average pooling, a 128-unit dense layer, 30% dropout, and a 10-class softmax head. Its configured run is 10 epochs with batch size 64. Inputs are transformed with the ResNet50 ImageNet preprocessing function for both training and inference.
 
 ## Evaluation Status
 
-No test accuracy, precision, recall, F1 score, or confusion matrix is reported here because the notebook's current evaluation code does not produce valid test metrics: it predicts using `X_train` and compares those predictions with `y_test`. The sample counts and data do not match. In addition, the notebook's save calls use `model.save(...)` rather than `transfer_model.save(...)`, so the file named `TransferlearningSP.keras` is not the transfer-learning model.
-
-These should be corrected before quoting model performance: evaluate the intended model on `X_test`, compare it with `y_test`, and save the same model that the app loads. The notebook currently has no executed training history from which reproducible performance numbers can be verified. This README intentionally does not claim an accuracy figure.
+The notebook now evaluates predictions against the held-out `X_test`/`y_test` split and saves the transfer model to the file loaded by the app. The train/validation split uses a fixed random seed and stratifies by class. The notebook has not been rerun in this checkout, so no fresh test accuracy or classification report is available here. Run the notebook to generate metrics and refresh `TransferlearningSP.keras` before reporting model performance.
 
 ## Repository Layout
 
@@ -58,7 +56,7 @@ These should be corrected before quoting model performance: evaluate the intende
 .
 ├── Image Classification using DL.ipynb  # Dataset exploration and model experiments
 ├── ImageClassificationModelSP.keras     # Saved CNN model
-├── TransferlearningSP.keras             # CNN artifact loaded by the Streamlit app
+├── TransferlearningSP.keras             # App model; regenerate by rerunning the notebook
 ├── app/
 │   ├── requirements.txt
 │   └── streamlit_app.py

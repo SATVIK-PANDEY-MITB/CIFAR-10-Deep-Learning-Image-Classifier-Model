@@ -99,7 +99,18 @@ if uploaded_file:
         img_array = img_array.astype(np.float32)
 
         if img_array.shape == (32, 32, 3):
-            prediction = model.predict(np.expand_dims(img_array, axis=0))
+            model_input = np.expand_dims(img_array, axis=0)
+            has_resnet50_backbone = any(
+                isinstance(layer, tf.keras.Model)
+                and layer.name.lower().startswith("resnet50")
+                for layer in model.layers
+            )
+            if has_resnet50_backbone:
+                model_input = tf.keras.applications.resnet50.preprocess_input(
+                    model_input * 255.0
+                )
+
+            prediction = model.predict(model_input)
             predicted_index = np.argmax(prediction)
             predicted_class = class_names[predicted_index]
             confidence = np.max(prediction) * 100
@@ -114,7 +125,7 @@ if uploaded_file:
 # ------------------- Footer / Info -------------------
 with st.expander("ℹ️ About this app"):
     st.markdown("""
-    - **Model**: CNN with transfer learning trained on CIFAR-10
+    - **Model**: Keras image classifier; the notebook includes scratch-CNN and ResNet50 transfer-learning workflows
     - **Classes**: Airplane, Automobile, Bird, Cat, Deer, Dog, Frog, Horse, Ship, Truck  
     - **Tech Stack**: Streamlit + TensorFlow + Pillow  
     - 💡 Tip: Upload or resize your image to **32x32 pixels** before uploading.
