@@ -48,7 +48,16 @@ The notebook uses an ImageNet-pretrained ResNet50 feature extractor with its bas
 
 ## Evaluation Status
 
-The notebook now evaluates predictions against the held-out `X_test`/`y_test` split and saves the transfer model to the file loaded by the app. The train/validation split uses a fixed random seed and stratifies by class. The notebook has not been rerun in this checkout, so no fresh test accuracy or classification report is available here. Run the notebook to generate metrics and refresh `TransferlearningSP.keras` before reporting model performance.
+The currently checked-in `TransferlearningSP.keras` artifact is the scratch CNN. I evaluated it on the full held-out CIFAR-10 test set (10,000 images), using the app's RGB conversion, 32 x 32 resize, and [0, 1] scaling:
+
+| Metric | Test result |
+|---|---:|
+| Accuracy | 72.31% |
+| Macro precision | 72.30% |
+| Macro recall | 72.31% |
+| Macro F1 score | 71.89% |
+
+These results describe the existing CNN artifact, not the ResNet50 transfer-learning model. The corrected notebook pipeline saves the ResNet50 model and computes its own held-out test metrics when run; it has not completed a training run yet. The train/validation split uses a fixed random seed and stratifies by class.
 
 ## Repository Layout
 
