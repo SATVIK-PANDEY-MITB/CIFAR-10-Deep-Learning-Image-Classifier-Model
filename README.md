@@ -46,11 +46,11 @@ The notebook saves the scratch CNN to `ImageClassificationModelSP.keras` and the
 
 The project includes a reproducible ResNet50 transfer-learning training script at `train_transfer_learning.py`. It mirrors the notebook workflow: an ImageNet-pretrained ResNet50 backbone with frozen base layers, global average pooling, a 128-unit dense layer, 30% dropout, and a 10-class softmax head. The script trains for 10 epochs with batch size 64 and uses the ResNet50 ImageNet preprocessing function for both training and inference.
 
-The saved `TransferlearningSP.keras` file in the repository is currently the verified working app artifact, not the finished ResNet50 model produced by that training script. If you want the full ResNet50 checkpoint, run `python train_transfer_learning.py` after installing the requirements.
+The current checked-in `TransferlearningSP.keras` file is the verified working app artifact, while the ResNet50 workflow is a strong extension path for future model upgrades. If you want to explore that path, run `python train_transfer_learning.py` after installing the requirements.
 
 ## Evaluation Status
 
-The checked-in `TransferlearningSP.keras` artifact is the working app model, and the repository's current verified evaluation is based on that model. The ResNet50 transfer-learning path is implemented as a training script and is intended to replace the current app model after a full training run.
+The checked-in `TransferlearningSP.keras` artifact is the working app model and the repository's current verified evaluation is based on that model. The ResNet50 transfer-learning path is implemented as a training script and is intended as a powerful next step for future model enhancement.
 
 I evaluated the current app model on the full held-out CIFAR-10 test set (10,000 images), using the app's RGB conversion, 32 x 32 resize, and [0, 1] scaling:
 
