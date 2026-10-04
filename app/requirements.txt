@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 streamlit
 tensorflow
 pillow
 numpy
+=======
+streamlit==1.37.1
+tensorflow==2.20.0
+pillow==10.4.0
+numpy==1.26.4
+>>>>>>> 9e04add (Fix runtime setup and restore working model app)
 
 
 
